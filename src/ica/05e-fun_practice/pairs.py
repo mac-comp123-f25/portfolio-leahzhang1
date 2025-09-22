@@ -7,3 +7,5 @@ def printPairs(n, m):
     for i in range(n):
         for j in range(m):
             print( "(", i, j, ")" )
+
+printPairs(3, 5)
