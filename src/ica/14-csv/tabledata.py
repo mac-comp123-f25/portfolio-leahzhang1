@@ -35,6 +35,14 @@ def lookup_phone(name, direct_table):
 
     return "No entry: " + name
 
+def lookup_office(name, direct_table):
+    for row in direct_table:
+        if row['Name'] == name:
+            return row['Building'], row['OfficeNum']
+
+    return "No entry: " + name
+print(lookup_office('Fox, Susan', directory))
+
 
 def collect_by_building(building, table):
     """
@@ -48,6 +56,17 @@ def collect_by_building(building, table):
 
     return match_list
 
+def collect_by_letter(letter,table):
+    assert type(letter) is str and len(letter) == 1, "Input must be a single letter string"
+    assert type(table) is list, "Table must be a list of dictionaries"
+
+    collected = []
+
+    for row in table:
+        if row["Name"].startswith(letter):
+            collected.append(row)
+
+    return collected
 
 def count_sunsets_before(hour_time, table):
     """
@@ -64,12 +83,27 @@ def count_sunsets_before(hour_time, table):
 
     return count
 
+def lookup_by_date(month, day, table):
+    day_str = str(day)
+
+    for row in table:
+        if row["Month"] == month and row["Day"] == day_str:
+            return row
+    return f"No entry for {month} {day}"
+
+def select_by_month(month, table):
+    assert type(month) is str, "Month must be a string"
+    assert type(table) is list, "Table must be a list of dictionaries"
+
+    selected = []
+
+    for row in table:
+        if row["Month"] == month:
+                selected.append(row)
+
+    return selected
 
 def daylight_hours(rise_hour, rise_min, set_hour, set_min):
-    """
-    Given four values, the hour and minute of sunrise, and the hour and minute of sunset, this computes the
-    number of hours of daylight and returns that value as a floating-point number.
-    """
     rise_time = (60 * rise_hour) + rise_min
     set_time = (60 * set_hour) + set_min
     minute_diff = set_time - rise_time
@@ -108,3 +142,28 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+def average_daylight_time(table):
+    total_daylight = 0
+    count = 0
+
+    for row in table:
+        # Get sunrise/sunset components as integers
+        rise_hr = int(row['RiseHour'])
+        rise_min = int(row['RiseMin'])
+        set_hr = int(row['SetHour'])
+        set_min = int(row['SetMin'])
+
+        # Compute daylight for this row using the helper
+        daylight = daylight_hours(rise_hr, rise_min, set_hr, set_min)
+
+        # Accumulate the total
+        total_daylight += daylight
+        count += 1
+
+    # Avoid dividing by zero
+    if count == 0:
+        return 0
+
+    # Compute and return the average daylight time
+    return total_daylight / count
