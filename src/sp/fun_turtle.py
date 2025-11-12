@@ -1,59 +1,47 @@
 import turtle
 import random
 
+turtle.setup(800, 800)
+turtle.bgcolor("white")
 t = turtle.Turtle()
+t.hideturtle()
 t.speed(0)
-screen = turtle.Screen()
-screen.bgcolor("black")
+t.width(2)
+turtle.tracer(False)
 
+colors = ["skyblue", "lightpink", "gold", "lightgreen"]
 
-def get_user_input():
-    size = screen.numinput("Tree Size", "Enter trunk length (60-150):", 100, 60, 150)
-    depth = screen.numinput("Tree Depth", "Enter recursion depth (4-8):", 6, 4, 8)
+def draw_petal(radius, angle):
+    for _ in range(2):
+        t.circle(radius, angle)
+        t.left(180 - angle)
 
-    color_choice = screen.textinput("Color", "1=Brown/Green, 2=Autumn, 3=Random:")
-    if color_choice == "1":
-        colors = ["#8B4513", "#2E8B57", "#228B22", "#32CD32", "#90EE90"]
-    elif color_choice == "2":
-        colors = ["#8B4513", "#A0522D", "#CD853F", "#FF4500", "#FFD700"]
-    else:
-        colors = ["#{:06x}".format(random.randint(0, 0xFFFFFF)) for _ in range(5)]
+def draw_flower(petals, radius, angle):
+    for _ in range(petals):
+        t.color(random.choice(colors))
+        draw_petal(radius, angle)
+        t.right(360 / petals)
 
-    return size, int(depth), colors
+layers = [
+    (12, 100, 60),
+    (24, 70, 80),
+    (36, 40, 100)
+]
 
-
-def draw_tree(branch_len, depth, colors, angle=25):
-    if depth == 0:
-        return
-
-    color_index = min(depth, len(colors) - 1)
-    t.pencolor(colors[color_index])
-    t.pensize(depth * 1.2)
-
-    t.forward(branch_len)
-
-    if depth > 1:
-        t.right(angle)
-        draw_tree(branch_len * 0.7, depth - 1, colors, angle + random.uniform(-5, 5))
-
-        t.left(angle * 2)
-        draw_tree(branch_len * 0.7, depth - 1, colors, angle + random.uniform(-5, 5))
-
-        t.right(angle)
-
-    t.backward(branch_len)
-
-
-def main():
-    size, depth, colors = get_user_input()
-
+for petals, radius, angle in layers:
     t.penup()
-    t.goto(0, -200)
-    t.setheading(90)
+    t.goto(0, 0)
     t.pendown()
+    draw_flower(petals, radius, angle)
+    t.right(10)
 
-    draw_tree(size, depth, colors)
-    t.hideturtle()
-    screen.exitonclick()
+t.penup()
+t.goto(-10, -20)
+t.pendown()
+t.color("gold")
+t.begin_fill()
+t.circle(20)
+t.end_fill()
 
-main()
+turtle.tracer(True)
+turtle.done()
