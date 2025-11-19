@@ -1,4 +1,4 @@
 # scriptE.py
 
-strng = "apples"
+string = "apples"   #Correct the spelling of the "string" from "sring"
 print(string, string, string)
